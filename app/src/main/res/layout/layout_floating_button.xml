@@ -6,30 +6,43 @@
     android:gravity="center"
     android:padding="4dp">
 
-    <ImageButton
+    <!--
+        Single touchable card — no nested clickable children.
+        Touch is handled entirely in FloatingButtonService via setOnTouchListener.
+        Tap = action, drag = move.
+    -->
+    <LinearLayout
         android:id="@+id/btnLock"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:orientation="vertical"
+        android:gravity="center"
         android:background="@drawable/floating_button_bg"
-        android:src="@android:drawable/ic_lock_idle_lock"
-        android:contentDescription="Lock screen and play YouTube in background"
-        android:elevation="8dp"
-        android:scaleType="centerInside"
-        android:padding="12dp" />
+        android:elevation="10dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔒"
+            android:textSize="26sp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lock &amp; Play"
+        android:text="Lock"
         android:textColor="#FFFFFF"
         android:textSize="9sp"
         android:textStyle="bold"
-        android:background="#AA000000"
-        android:paddingStart="4dp"
-        android:paddingEnd="4dp"
+        android:background="#BB000000"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
-        android:layout_marginTop="2dp" />
+        android:layout_marginTop="3dp" />
 
 </LinearLayout>

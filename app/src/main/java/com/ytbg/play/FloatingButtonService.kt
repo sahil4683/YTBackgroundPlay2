@@ -27,11 +27,13 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
+import kotlin.math.abs
 
 class FloatingButtonService : Service() {
 
     private lateinit var windowManager: WindowManager
     private var floatingView: View? = null
+    private var floatParams: WindowManager.LayoutParams? = null
     private lateinit var devicePolicyManager: DevicePolicyManager
     private lateinit var adminComponent: ComponentName
     private lateinit var audioManager: AudioManager
@@ -49,6 +51,7 @@ class FloatingButtonService : Service() {
         const val METHOD_A = "A"
         const val METHOD_B = "B"
         const val METHOD_C = "C"
+        private const val DRAG_THRESHOLD_PX = 12
 
         var isRunning = false
         var isYouTubeActive = false
@@ -74,42 +77,33 @@ class FloatingButtonService : Service() {
 
     private fun getCurrentMethod() = prefs.getString(PREF_METHOD, METHOD_A) ?: METHOD_A
 
-    // METHOD A: Simulate Home press first, then lock after 800ms delay
-    // YouTube thinks user went home normally — not locked
-    private fun methodA_HomeThenLock() {
+    // ── METHOD A ────────────────────────────────────────────────────────────
+    private fun methodA() {
         YouTubeDetectorService.instance?.performGlobalAction(
             android.accessibilityservice.AccessibilityService.GLOBAL_ACTION_HOME
         )
         handler.postDelayed({
-            if (devicePolicyManager.isAdminActive(adminComponent)) {
-                devicePolicyManager.lockNow()
-            }
+            if (devicePolicyManager.isAdminActive(adminComponent)) devicePolicyManager.lockNow()
         }, 800)
     }
 
-    // METHOD B: Black fullscreen overlay — YouTube never sees a lock event
-    // Tap black screen again to dismiss and return
-    private fun methodB_FakeScreenOff() {
-        if (blackOverlayView != null) {
-            methodB_RemoveOverlay()
-            return
-        }
+    // ── METHOD B ────────────────────────────────────────────────────────────
+    private fun methodB() {
+        if (blackOverlayView != null) { removeBlackOverlay(); return }
 
-        val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+        val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
         @Suppress("DEPRECATION")
-        wakeLock = powerManager.newWakeLock(
+        wakeLock = pm.newWakeLock(
             PowerManager.SCREEN_DIM_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
             "YTBg::FakeOff"
-        )
-        wakeLock?.acquire(30 * 60 * 1000L)
+        ).also { it.acquire(30 * 60 * 1000L) }
 
-        val overlayParams = WindowManager.LayoutParams(
+        val p = WindowManager.LayoutParams(
             WindowManager.LayoutParams.MATCH_PARENT,
             WindowManager.LayoutParams.MATCH_PARENT,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
+            else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
@@ -119,25 +113,21 @@ class FloatingButtonService : Service() {
 
         blackOverlayView = View(this).apply {
             setBackgroundColor(Color.BLACK)
-            setOnClickListener { methodB_RemoveOverlay() }
+            setOnClickListener { removeBlackOverlay() }
         }
-
-        windowManager.addView(blackOverlayView, overlayParams)
-        floatingView?.findViewById<TextView>(R.id.tvLabel)?.text = "Tap to wake"
+        windowManager.addView(blackOverlayView, p)
+        setLabel("Tap to wake")
     }
 
-    private fun methodB_RemoveOverlay() {
-        blackOverlayView?.let {
-            try { windowManager.removeView(it) } catch (_: Exception) {}
-        }
+    private fun removeBlackOverlay() {
+        blackOverlayView?.let { try { windowManager.removeView(it) } catch (_: Exception) {} }
         blackOverlayView = null
-        wakeLock?.release()
-        wakeLock = null
-        floatingView?.findViewById<TextView>(R.id.tvLabel)?.let { updateButtonLabel(it) }
+        wakeLock?.release(); wakeLock = null
+        updateLabel()
     }
 
-    // METHOD C: Request audio focus (holds audio session alive) then lock
-    private fun methodC_AudioFocusThenLock() {
+    // ── METHOD C ────────────────────────────────────────────────────────────
+    private fun methodC() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val req = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
                 .setAudioAttributes(
@@ -155,11 +145,8 @@ class FloatingButtonService : Service() {
             @Suppress("DEPRECATION")
             audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
         }
-
         handler.postDelayed({
-            if (devicePolicyManager.isAdminActive(adminComponent)) {
-                devicePolicyManager.lockNow()
-            }
+            if (devicePolicyManager.isAdminActive(adminComponent)) devicePolicyManager.lockNow()
             handler.postDelayed({
                 audioFocusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
                 audioFocusRequest = null
@@ -167,14 +154,15 @@ class FloatingButtonService : Service() {
         }, 300)
     }
 
-    private fun handleLockButtonTap() {
+    private fun runMethod() {
         when (getCurrentMethod()) {
-            METHOD_A -> methodA_HomeThenLock()
-            METHOD_B -> methodB_FakeScreenOff()
-            METHOD_C -> methodC_AudioFocusThenLock()
+            METHOD_A -> methodA()
+            METHOD_B -> methodB()
+            METHOD_C -> methodC()
         }
     }
 
+    // ── Floating button ─────────────────────────────────────────────────────
     private fun showFloatingButton() {
         floatingView = LayoutInflater.from(this).inflate(R.layout.layout_floating_button, null)
 
@@ -183,48 +171,63 @@ class FloatingButtonService : Service() {
             WindowManager.LayoutParams.WRAP_CONTENT,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-            else
-                @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE,
+            else @Suppress("DEPRECATION") WindowManager.LayoutParams.TYPE_PHONE,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.END
-            x = 16
-            y = 300
+            x = 16; y = 300
         }
+        floatParams = params
 
-        val label = floatingView!!.findViewById<TextView>(R.id.tvLabel)
         floatingView!!.visibility = View.GONE
+        updateLabel()
 
+        // Callback from accessibility service
         visibilityCallback = { ytActive ->
             floatingView?.post {
                 floatingView?.visibility = if (ytActive) View.VISIBLE else View.GONE
-                if (!ytActive) methodB_RemoveOverlay()
+                if (!ytActive) removeBlackOverlay()
             }
         }
 
-        updateButtonLabel(label)
-
-        var initialX = 0; var initialY = 0
-        var touchX = 0f; var touchY = 0f
-        var moved = false
+        // ── Single touch listener on the whole floating view ──
+        // Tracks finger movement to distinguish tap vs drag.
+        var downX = 0f
+        var downY = 0f
+        var startParamX = 0
+        var startParamY = 0
+        var isDrag = false
 
         floatingView!!.setOnTouchListener { _, event ->
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    initialX = params.x; initialY = params.y
-                    touchX = event.rawX; touchY = event.rawY
-                    moved = false; true
+                    downX = event.rawX
+                    downY = event.rawY
+                    startParamX = params.x
+                    startParamY = params.y
+                    isDrag = false
+                    true
                 }
                 MotionEvent.ACTION_MOVE -> {
-                    val dx = (touchX - event.rawX).toInt()
-                    val dy = (event.rawY - touchY).toInt()
-                    if (kotlin.math.abs(dx) > 8 || kotlin.math.abs(dy) > 8) moved = true
-                    params.x = initialX + dx; params.y = initialY + dy
-                    windowManager.updateViewLayout(floatingView, params); true
+                    val dx = (downX - event.rawX).toInt()
+                    val dy = (event.rawY - downY).toInt()
+                    if (!isDrag && (abs(dx) > DRAG_THRESHOLD_PX || abs(dy) > DRAG_THRESHOLD_PX)) {
+                        isDrag = true
+                    }
+                    if (isDrag) {
+                        params.x = startParamX + dx
+                        params.y = startParamY + dy
+                        try { windowManager.updateViewLayout(floatingView, params) } catch (_: Exception) {}
+                    }
+                    true
                 }
                 MotionEvent.ACTION_UP -> {
-                    if (!moved) { handleLockButtonTap(); updateButtonLabel(label) }
+                    if (!isDrag) {
+                        // Clean tap — fire action
+                        runMethod()
+                        updateLabel()
+                    }
                     true
                 }
                 else -> false
@@ -234,44 +237,49 @@ class FloatingButtonService : Service() {
         windowManager.addView(floatingView, params)
     }
 
-    private fun updateButtonLabel(label: TextView) {
-        label.text = when (getCurrentMethod()) {
+    private fun setLabel(text: String) {
+        floatingView?.post {
+            floatingView?.findViewById<TextView>(R.id.tvLabel)?.text = text
+        }
+    }
+
+    private fun updateLabel() {
+        setLabel(when (getCurrentMethod()) {
             METHOD_A -> "🏠 Home+Lock"
             METHOD_B -> "⚫ Fake Off"
             METHOD_C -> "🎵 Audio+Lock"
-            else -> "Lock & Play"
-        }
+            else -> "Lock"
+        })
     }
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, "YT Background Play", NotificationManager.IMPORTANCE_LOW)
-                .apply { setShowBadge(false) }
-            getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
+            val ch = NotificationChannel(CHANNEL_ID, "YT Background Play", NotificationManager.IMPORTANCE_LOW)
+                .also { it.setShowBadge(false) }
+            getSystemService(NotificationManager::class.java).createNotificationChannel(ch)
         }
     }
 
     private fun buildNotification(): Notification {
         val pi = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
-        val subtitle = when (getCurrentMethod()) {
-            METHOD_A -> "Mode: Home + Lock"
-            METHOD_B -> "Mode: Fake Screen Off"
-            METHOD_C -> "Mode: Audio Focus + Lock"
+        val sub = when (getCurrentMethod()) {
+            METHOD_A -> "Home + Lock"
+            METHOD_B -> "Fake Screen Off"
+            METHOD_C -> "Audio Focus + Lock"
             else -> "Active"
         }
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("YT Background Play")
-            .setContentText("$subtitle • Open YouTube to use")
+            .setContentTitle("YT Background Play — $sub")
+            .setContentText("Open YouTube to use the floating button")
             .setSmallIcon(android.R.drawable.ic_media_play)
-            .setContentIntent(pi)
-            .setOngoing(true)
+            .setContentIntent(pi).setOngoing(true)
             .setPriority(NotificationCompat.PRIORITY_LOW)
             .build()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         getSystemService(NotificationManager::class.java).notify(NOTIFICATION_ID, buildNotification())
-        floatingView?.findViewById<TextView>(R.id.tvLabel)?.let { updateButtonLabel(it) }
+        updateLabel()
         return START_STICKY
     }
 
@@ -279,7 +287,7 @@ class FloatingButtonService : Service() {
         super.onDestroy()
         isRunning = false
         visibilityCallback = null
-        methodB_RemoveOverlay()
+        removeBlackOverlay()
         audioFocusRequest?.let { audioManager.abandonAudioFocusRequest(it) }
         floatingView?.let { try { windowManager.removeView(it) } catch (_: Exception) {} }
         floatingView = null
