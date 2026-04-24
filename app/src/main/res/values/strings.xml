@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">YT Background Play</string>
+    <string name="accessibility_service_label">YouTube Background Play Detector</string>
+    <string name="accessibility_service_description">Detects when YouTube is open to show the floating lock button for background playback</string>
+</resources>

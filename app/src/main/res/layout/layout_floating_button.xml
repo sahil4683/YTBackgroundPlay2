@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="4dp">
+
+    <ImageButton
+        android:id="@+id/btnLock"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/floating_button_bg"
+        android:src="@android:drawable/ic_lock_idle_lock"
+        android:contentDescription="Lock screen and play YouTube in background"
+        android:elevation="8dp"
+        android:scaleType="centerInside"
+        android:padding="12dp" />
+
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lock &amp; Play"
+        android:textColor="#FFFFFF"
+        android:textSize="9sp"
+        android:textStyle="bold"
+        android:background="#AA000000"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_marginTop="2dp" />
+
+</LinearLayout>

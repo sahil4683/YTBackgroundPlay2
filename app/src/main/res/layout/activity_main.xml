@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0A0A0A">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="▶ YT Background Play"
+            android:textColor="#FF0000"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Play YouTube with screen locked"
+            android:textColor="#888888"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Status Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="16dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="STATUS"
+                android:textColor="#FF0000"
+                android:textSize="12sp"
+                android:letterSpacing="0.1"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/statusOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="❌ Overlay Permission: Not Granted"
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/statusAdmin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="❌ Device Admin: Inactive"
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/statusAccessibility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="❌ Accessibility: Disabled"
+                android:textColor="#CCCCCC"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/statusReady"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="🔴 Complete all steps below."
+                android:textColor="#FFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <!-- Step 1 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Step 1: Overlay Permission"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Allows floating button to appear over YouTube"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnEnableOverlay"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Grant Overlay Permission"
+            android:backgroundTint="#FF0000"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Step 2 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Step 2: Device Admin"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Needed to lock screen while audio keeps playing"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnEnableAdmin"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Activate Device Admin"
+            android:backgroundTint="#FF0000"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Step 3 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Step 3: Accessibility Service"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Detects when YouTube is open to show the button"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            android:layout_marginBottom="10dp" />
+
+        <Button
+            android:id="@+id/btnEnableAccessibility"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Enable Accessibility Service"
+            android:backgroundTint="#FF0000"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Start / Stop -->
+        <Button
+            android:id="@+id/btnStartService"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="▶  START SERVICE"
+            android:backgroundTint="#CC0000"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:enabled="false"
+            android:layout_marginBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnStopService"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="■  Stop Service"
+            android:backgroundTint="#333333"
+            android:textColor="#AAAAAA"
+            android:layout_marginBottom="24dp" />
+
+        <!-- How it works -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="How it works"
+            android:textColor="#FF0000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1. Start the service\n2. Open YouTube and play a video\n3. A red 🔴 floating button appears\n4. Tap the button → screen locks\n5. Audio continues playing!\n6. Drag the button to reposition it"
+            android:textColor="#888888"
+            android:textSize="13sp"
+            android:lineSpacingExtra="4dp" />
+
+    </LinearLayout>
+</ScrollView>
