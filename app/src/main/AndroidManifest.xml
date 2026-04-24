@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Permissions -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.YTBackgroundPlay">
 
-        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -26,7 +25,6 @@
             </intent-filter>
         </activity>
 
-        <!-- Floating Button Foreground Service -->
         <service
             android:name=".FloatingButtonService"
             android:exported="false"
@@ -36,7 +34,6 @@
                 android:value="Overlay floating button for YouTube background playback" />
         </service>
 
-        <!-- Accessibility Service to detect YouTube -->
         <service
             android:name=".YouTubeDetectorService"
             android:exported="true"
@@ -50,7 +47,6 @@
                 android:resource="@xml/accessibility_service_config" />
         </service>
 
-        <!-- Device Admin Receiver for screen lock -->
         <receiver
             android:name=".AdminReceiver"
             android:exported="true"
@@ -63,7 +59,6 @@
             </intent-filter>
         </receiver>
 
-        <!-- Boot receiver to restart service -->
         <receiver
             android:name=".BootReceiver"
             android:exported="true">

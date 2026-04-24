@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="20dp">
 
         <!-- Header -->
         <TextView
@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:text="▶ YT Background Play"
             android:textColor="#FF0000"
-            android:textSize="26sp"
+            android:textSize="24sp"
             android:textStyle="bold"
             android:gravity="center"
             android:layout_marginBottom="4dp" />
@@ -25,187 +25,201 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Play YouTube with screen locked"
-            android:textColor="#888888"
-            android:textSize="14sp"
+            android:textColor="#666666"
+            android:textSize="13sp"
             android:gravity="center"
-            android:layout_marginBottom="32dp" />
+            android:layout_marginBottom="20dp" />
 
-        <!-- Status Card -->
+        <!-- STATUS CARD -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/card_background"
             android:padding="16dp"
-            android:layout_marginBottom="24dp">
+            android:layout_marginBottom="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="STATUS"
                 android:textColor="#FF0000"
-                android:textSize="12sp"
-                android:letterSpacing="0.1"
-                android:layout_marginBottom="12dp" />
+                android:textSize="11sp"
+                android:letterSpacing="0.15"
+                android:layout_marginBottom="10dp" />
 
-            <TextView
-                android:id="@+id/statusOverlay"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="❌ Overlay Permission: Not Granted"
-                android:textColor="#CCCCCC"
-                android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
+            <TextView android:id="@+id/statusOverlay"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="❌ Overlay: Not Granted"
+                android:textColor="#CCCCCC" android:textSize="13sp" android:layout_marginBottom="6dp"/>
 
-            <TextView
-                android:id="@+id/statusAdmin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <TextView android:id="@+id/statusAdmin"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:text="❌ Device Admin: Inactive"
-                android:textColor="#CCCCCC"
-                android:textSize="14sp"
-                android:layout_marginBottom="8dp" />
+                android:textColor="#CCCCCC" android:textSize="13sp" android:layout_marginBottom="6dp"/>
 
-            <TextView
-                android:id="@+id/statusAccessibility"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <TextView android:id="@+id/statusAccessibility"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:text="❌ Accessibility: Disabled"
-                android:textColor="#CCCCCC"
-                android:textSize="14sp"
-                android:layout_marginBottom="12dp" />
+                android:textColor="#CCCCCC" android:textSize="13sp" android:layout_marginBottom="6dp"/>
 
-            <TextView
-                android:id="@+id/statusReady"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="🔴 Complete all steps below."
-                android:textColor="#FFFFFF"
-                android:textSize="13sp"
-                android:textStyle="bold" />
-
+            <TextView android:id="@+id/statusService"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="⚫ Service: Stopped"
+                android:textColor="#CCCCCC" android:textSize="13sp"/>
         </LinearLayout>
 
-        <!-- Step 1 -->
+        <!-- PERMISSIONS -->
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Step 1: Overlay Permission"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="STEP 1 — PERMISSIONS"
+            android:textColor="#FF0000" android:textSize="11sp" android:letterSpacing="0.15"
+            android:layout_marginBottom="10dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Allows floating button to appear over YouTube"
-            android:textColor="#888888"
-            android:textSize="13sp"
-            android:layout_marginBottom="10dp" />
-
-        <Button
-            android:id="@+id/btnEnableOverlay"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
+        <Button android:id="@+id/btnEnableOverlay"
+            android:layout_width="match_parent" android:layout_height="44dp"
             android:text="Grant Overlay Permission"
-            android:backgroundTint="#FF0000"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="24dp" />
+            android:backgroundTint="#1A1A1A" android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Step 2 -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Step 2: Device Admin"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Needed to lock screen while audio keeps playing"
-            android:textColor="#888888"
-            android:textSize="13sp"
-            android:layout_marginBottom="10dp" />
-
-        <Button
-            android:id="@+id/btnEnableAdmin"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
+        <Button android:id="@+id/btnEnableAdmin"
+            android:layout_width="match_parent" android:layout_height="44dp"
             android:text="Activate Device Admin"
-            android:backgroundTint="#FF0000"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="24dp" />
+            android:backgroundTint="#1A1A1A" android:textColor="#FFFFFF"
+            android:layout_marginBottom="8dp"/>
 
-        <!-- Step 3 -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Step 3: Accessibility Service"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Detects when YouTube is open to show the button"
-            android:textColor="#888888"
-            android:textSize="13sp"
-            android:layout_marginBottom="10dp" />
-
-        <Button
-            android:id="@+id/btnEnableAccessibility"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
+        <Button android:id="@+id/btnEnableAccessibility"
+            android:layout_width="match_parent" android:layout_height="44dp"
             android:text="Enable Accessibility Service"
-            android:backgroundTint="#FF0000"
-            android:textColor="#FFFFFF"
-            android:layout_marginBottom="32dp" />
+            android:backgroundTint="#1A1A1A" android:textColor="#FFFFFF"
+            android:layout_marginBottom="20dp"/>
 
-        <!-- Start / Stop -->
-        <Button
-            android:id="@+id/btnStartService"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
+        <!-- METHOD SELECTOR -->
+        <TextView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="STEP 2 — CHOOSE METHOD"
+            android:textColor="#FF0000" android:textSize="11sp" android:letterSpacing="0.15"
+            android:layout_marginBottom="6dp"/>
+
+        <TextView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Try each method — different phones work best with different ones"
+            android:textColor="#666666" android:textSize="12sp"
+            android:layout_marginBottom="12dp"/>
+
+        <RadioGroup android:id="@+id/radioGroup"
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
+
+            <!-- Method A -->
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_background"
+                android:padding="14dp"
+                android:layout_marginBottom="8dp">
+
+                <RadioButton android:id="@+id/radioMethodA"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="🏠  Method A — Home + Lock"
+                    android:textColor="#FFFFFF" android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:buttonTint="#FF0000"
+                    android:checked="true"/>
+
+                <TextView
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Presses Home first so YouTube thinks you went home normally, then locks after 0.8s. Most compatible."
+                    android:textColor="#888888" android:textSize="12sp"
+                    android:layout_marginTop="4dp" android:layout_marginStart="32dp"/>
+            </LinearLayout>
+
+            <!-- Method B -->
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_background"
+                android:padding="14dp"
+                android:layout_marginBottom="8dp">
+
+                <RadioButton android:id="@+id/radioMethodB"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="⚫  Method B — Fake Screen Off"
+                    android:textColor="#FFFFFF" android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:buttonTint="#FF0000"/>
+
+                <TextView
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Shows a pure black overlay — screen appears off but YouTube never receives a lock event. Tap screen to return. Best for newer YouTube."
+                    android:textColor="#888888" android:textSize="12sp"
+                    android:layout_marginTop="4dp" android:layout_marginStart="32dp"/>
+            </LinearLayout>
+
+            <!-- Method C -->
+            <LinearLayout
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_background"
+                android:padding="14dp">
+
+                <RadioButton android:id="@+id/radioMethodC"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="🎵  Method C — Audio Focus + Lock"
+                    android:textColor="#FFFFFF" android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:buttonTint="#FF0000"/>
+
+                <TextView
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Claims audio focus from Android before locking, tricking the system into keeping the audio session alive through lock."
+                    android:textColor="#888888" android:textSize="12sp"
+                    android:layout_marginTop="4dp" android:layout_marginStart="32dp"/>
+            </LinearLayout>
+
+        </RadioGroup>
+
+        <!-- START / STOP -->
+        <TextView
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="STEP 3 — START SERVICE"
+            android:textColor="#FF0000" android:textSize="11sp" android:letterSpacing="0.15"
+            android:layout_marginBottom="10dp"/>
+
+        <Button android:id="@+id/btnStartService"
+            android:layout_width="match_parent" android:layout_height="52dp"
             android:text="▶  START SERVICE"
-            android:backgroundTint="#CC0000"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold"
+            android:backgroundTint="#CC0000" android:textColor="#FFFFFF"
+            android:textSize="15sp" android:textStyle="bold"
             android:enabled="false"
-            android:layout_marginBottom="12dp" />
+            android:layout_marginBottom="8dp"/>
 
-        <Button
-            android:id="@+id/btnStopService"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
+        <Button android:id="@+id/btnStopService"
+            android:layout_width="match_parent" android:layout_height="44dp"
             android:text="■  Stop Service"
-            android:backgroundTint="#333333"
-            android:textColor="#AAAAAA"
-            android:layout_marginBottom="24dp" />
+            android:backgroundTint="#1A1A1A" android:textColor="#888888"
+            android:layout_marginBottom="24dp"/>
 
-        <!-- How it works -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="How it works"
-            android:textColor="#FF0000"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp" />
+        <!-- Tips -->
+        <LinearLayout
+            android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/card_background"
+            android:padding="14dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="1. Start the service\n2. Open YouTube and play a video\n3. A red 🔴 floating button appears\n4. Tap the button → screen locks\n5. Audio continues playing!\n6. Drag the button to reposition it"
-            android:textColor="#888888"
-            android:textSize="13sp"
-            android:lineSpacingExtra="4dp" />
+            <TextView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="💡 Tips"
+                android:textColor="#FF0000" android:textSize="13sp"
+                android:textStyle="bold" android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="• Start with Method A — works on most devices\n• If audio still stops, try Method B (best for new YouTube)\n• Method C works well on some Realme/MIUI devices\n• Floating button is draggable — move it anywhere\n• Method B: tap black screen to return to YouTube"
+                android:textColor="#888888" android:textSize="12sp"
+                android:lineSpacingExtra="4dp"/>
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

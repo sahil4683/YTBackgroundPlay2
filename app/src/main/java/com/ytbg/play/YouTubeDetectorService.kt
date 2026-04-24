@@ -9,6 +9,12 @@ class YouTubeDetectorService : AccessibilityService() {
 
     companion object {
         const val YOUTUBE_PACKAGE = "com.google.android.youtube"
+        var instance: YouTubeDetectorService? = null
+    }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        instance = this
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -16,10 +22,8 @@ class YouTubeDetectorService : AccessibilityService() {
             val packageName = event.packageName?.toString() ?: return
             val isYouTube = packageName == YOUTUBE_PACKAGE
 
-            // Update floating button visibility
             FloatingButtonService.isYouTubeActive = isYouTube
 
-            // If YouTube just opened and service isn't running, start it
             if (isYouTube && !FloatingButtonService.isRunning) {
                 val serviceIntent = Intent(this, FloatingButtonService::class.java)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -32,10 +36,12 @@ class YouTubeDetectorService : AccessibilityService() {
     }
 
     override fun onInterrupt() {
+        instance = null
         FloatingButtonService.isYouTubeActive = false
     }
 
-    override fun onServiceConnected() {
-        super.onServiceConnected()
+    override fun onDestroy() {
+        super.onDestroy()
+        instance = null
     }
 }
