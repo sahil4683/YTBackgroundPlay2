@@ -11,8 +11,12 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
+import android.os.PowerManager
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -28,6 +32,9 @@ class FloatingButtonService : Service() {
     private var floatingView: View? = null
     private lateinit var devicePolicyManager: DevicePolicyManager
     private lateinit var adminComponent: ComponentName
+    private lateinit var audioManager: AudioManager
+    private var audioFocusRequest: AudioFocusRequest? = null
+    private var wakeLock: PowerManager.WakeLock? = null
 
     companion object {
         const val CHANNEL_ID = "yt_bg_channel"
@@ -45,6 +52,7 @@ class FloatingButtonService : Service() {
         super.onCreate()
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         devicePolicyManager = getSystemService(Context.DEVICE_POLICY_SERVICE) as DevicePolicyManager
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         adminComponent = ComponentName(this, AdminReceiver::class.java)
         isRunning = true
         createNotificationChannel()
@@ -124,8 +132,82 @@ class FloatingButtonService : Service() {
     }
 
     private fun lockScreen() {
+        // Request audio focus BEFORE locking to keep audio playing
+        requestAudioFocus()
+        
+        // Acquire a partial wake lock to keep CPU alive during lock
+        acquireWakeLock()
+        
         if (devicePolicyManager.isAdminActive(adminComponent)) {
             devicePolicyManager.lockNow()
+        }
+    }
+
+    private fun requestAudioFocus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+
+            audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN_TRANSIENT)
+                .setAudioAttributes(audioAttributes)
+                .setWillPauseWhenDucked(false)  // Don't pause when ducked
+                .setOnAudioFocusChangeListener { focusChange ->
+                    // Handle audio focus changes if needed
+                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                        // Re-request audio focus to keep playing
+                        requestAudioFocus()
+                    }
+                }
+                .build()
+
+            audioFocusRequest?.let {
+                audioManager.requestAudioFocus(it)
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.requestAudioFocus(
+                { focusChange ->
+                    if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                        requestAudioFocus()
+                    }
+                },
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN_TRANSIENT
+            )
+        }
+    }
+
+    private fun acquireWakeLock() {
+        if (wakeLock == null) {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = powerManager.newWakeLock(
+                PowerManager.PARTIAL_WAKE_LOCK,
+                "YTBackgroundPlay:AudioPlayback"
+            ).apply {
+                acquire(10 * 60 * 1000L) // 10 minutes timeout
+            }
+        }
+    }
+
+    private fun releaseWakeLock() {
+        wakeLock?.let {
+            if (it.isHeld) {
+                it.release()
+            }
+        }
+        wakeLock = null
+    }
+
+    private fun releaseAudioFocus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioFocusRequest?.let {
+                audioManager.abandonAudioFocusRequest(it)
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            audioManager.abandonAudioFocus(null)
         }
     }
 
@@ -166,6 +248,8 @@ class FloatingButtonService : Service() {
         visibilityCallback = null
         floatingView?.let { windowManager.removeView(it) }
         floatingView = null
+        releaseAudioFocus()
+        releaseWakeLock()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
